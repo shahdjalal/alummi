@@ -1,0 +1,18 @@
+.likedButton {
+  background-color: #A41A2F; /* أحمر غامق */
+  color: white;
+  border: 1px solid #A41A2F;
+  transition: all 0.3s ease;
+}
+
+.unlikedButton {
+  background-color: transparent;
+  color: #A41A2F;
+  border: 1px solid #A41A2F;
+  transition: all 0.3s ease;
+}
+
+.unlikedButton:hover {
+  background-color: #A41A2F;
+  color: white;
+}
