@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Container, Form, Button, ListGroup } from 'react-bootstrap';
-import { UserContext } from '../../components/context/UserContext';
+import { Container, Form, Button, ListGroup, Card } from 'react-bootstrap';
+import { UserContext } from '../../../components/context/UserContext';
 import { useRef } from 'react';
+import { FaPaperPlane } from 'react-icons/fa';
+import MessageLoading from '../../../components/loading/MessageLoading';
 
 export default function Chat() {
   const { userId } = useParams(); // مين بتكلمي
@@ -14,6 +16,7 @@ export default function Chat() {
  const [receiver, setReceiver] = useState(null);
  const [selectedFile, setSelectedFile] = useState(null);
  const messagesEndRef = useRef(null);
+const [isLoadingMessages, setIsLoadingMessages] = useState(true);
 
  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -48,6 +51,8 @@ export default function Chat() {
       setMessages(res.data);
     } catch (error) {
       console.error('❌ Failed to fetch messages');
+    } finally {
+      setIsLoadingMessages(false);
     }
   };
 
@@ -77,15 +82,16 @@ export default function Chat() {
   };
   
 
-  if (!user) return <p>Loading...</p>;
-
+  // if (!user) return <p>Loading...</p>;
+if (isLoadingMessages) return <MessageLoading />;
 
   return (
-    <Container fluid className="p-3" style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <h4>Chat with: {receiver ? receiver.name : userId}</h4>
+    <Container  className="p-3" style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <h3 style={{ color: '#A41A2F' }}>Chat with: {receiver ? receiver.name : userId}</h3>
   
       {/* الرسائل داخل صندوق قابل للتمرير */}
       <div style={{ flex: 1, overflowY: 'auto', marginBottom: '100px' }}>
+          <Card className="p-3 mt-3" style={{boxShadow:'0px 4px 6px #eee'}}>
         <ListGroup>
           {messages.map((msg, index) => (
             <div
@@ -98,7 +104,7 @@ export default function Chat() {
             >
               <div
                 style={{
-                  backgroundColor: msg.sender === user._id ? '#DCF8C6' : '#F1F0F0',
+                  backgroundColor: msg.sender === user._id ? '#a41a2f4e' : '#F1F0F0',
                   padding: '10px 15px',
                   borderRadius: '20px',
                   maxWidth: '70%',
@@ -129,6 +135,7 @@ export default function Chat() {
               <div ref={messagesEndRef} />  </div>
           ))}
         </ListGroup>
+        </Card>
       </div>
   
       {/* 🟢 فورم ثابت أسفل الشاشة */}
@@ -160,8 +167,8 @@ export default function Chat() {
               onChange={(e) => setSelectedFile(e.target.files[0])}
               style={{ maxWidth: '180px' }}
             />
-            <Button type="submit" variant="primary">
-              Send
+            <Button type="submit" style={{ backgroundColor: '#A41A2F' }}>
+            <FaPaperPlane />
             </Button>
           </Form.Group>
         </Container>

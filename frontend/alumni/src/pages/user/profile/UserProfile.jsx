@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import { Container, Card, Button, Badge, Form } from 'react-bootstrap';
-import { FaThumbsUp, FaComment } from 'react-icons/fa';
+import { FaThumbsUp, FaComment, FaRocketchat, FaPaperPlane } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
+import Loading from '../../../components/loading/Loading';
+import { SlUserFollow, SlUserUnfollow } from "react-icons/sl";
 
 export default function UserProfile() {
   const { userId } = useParams();
@@ -86,8 +88,8 @@ export default function UserProfile() {
     }));
   };
 
-  if (!user) return <p>Loading...</p>;
 
+if (!user) return <Loading />;
   return (
     <Container className="my-5">
       <Card className="p-3 mb-4">
@@ -112,7 +114,8 @@ export default function UserProfile() {
       onClick={handleFollowToggle}
       className="mb-2 me-2"
     >
-      {isFollowing ? "Unfollow" : "Follow"}
+     {isFollowing ? <span><SlUserUnfollow className="me-1" />UnFollow</span> : <span><SlUserFollow className="me-1" />Follow</span>}
+
     </Button>
 
     {/* 🟢 زر Chat */}
@@ -122,7 +125,7 @@ export default function UserProfile() {
       to={`/chat/${user._id}`} 
       className="mb-2"
     >
-      Chat
+     <FaRocketchat /> Chat
     </Button>
   </>
 )}
@@ -152,35 +155,52 @@ export default function UserProfile() {
               )}
               <div className="d-flex justify-content-between mt-2">
               <Button 
-  variant={post.likes.includes(currentUserId) ? "primary" : "outline-primary"} 
+  style={{
+   backgroundColor: post.likes.includes(currentUserId) ? "#A41A2F" : "transparent",
+    color: post.likes.includes(currentUserId) ? "white" : "#A41A2F",
+   borderColor: "#A41A2F"}}
   size="sm" 
   onClick={() => handleLike(post._id)}
 >
   <FaThumbsUp /> {post.likes.length}
 </Button>
 
-                <Button variant="outline-secondary" size="sm" onClick={() => toggleComments(post._id)}>
+                <Button  style={{ color: '#A41A2F' ,borderColor:'#A41A2F',backgroundColor:'white'}}
+                                className="mb-3" size="sm" onClick={() => toggleComments(post._id)}>
                   <FaComment /> {post.comments.length} Comments
                 </Button>
               </div>
 
               {showComments[post._id] && (
+                
                 <div className="mt-3">
+                                    <Form 
+  onSubmit={(e) => {
+    e.preventDefault();
+    const text = e.target.elements.commentText.value;
+    handleComment(post._id, text);
+    e.target.reset();
+  }} 
+  className="d-flex align-items-center"
+>
+  <Form.Control
+    name="commentText"
+    type="text"
+    placeholder="Write a comment..."
+    className="me-2"
+  />
+  <Button type="submit" style={{ backgroundColor: '#A41A2F', border: 'none' }}>
+    <FaPaperPlane />
+  </Button>
+</Form>
+
+              
                   {post.comments.map(comment => (
                     <p key={comment._id}>
                       <strong>{comment.user?.name}:</strong> {comment.text}
                     </p>
                   ))}
-                  <Form onSubmit={(e) => {
-                    e.preventDefault();
-                    const text = e.target.elements.commentText.value;
-                    handleComment(post._id, text);
-                    e.target.reset();
-                  }}>
-                    <Form.Control type="text" name="commentText" placeholder="Write a comment..." className="mt-2" />
-                    <Button type="submit" size="sm" variant="success" className="mt-2">Comment</Button>
-                  </Form>
-                </div>
+  </div>
               )}
             </Card.Body>
           </Card>

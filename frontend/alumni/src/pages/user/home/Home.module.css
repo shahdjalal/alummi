@@ -1,18 +1,30 @@
-.likedButton {
-  background-color: #A41A2F; /* أحمر غامق */
-  color: white;
-  border: 1px solid #A41A2F;
-  transition: all 0.3s ease;
-}
-
-.unlikedButton {
-  background-color: transparent;
+.comment{
   color: #A41A2F;
-  border: 1px solid #A41A2F;
-  transition: all 0.3s ease;
 }
 
-.unlikedButton:hover {
-  background-color: #A41A2F;
-  color: white;
+.comment:hover{
+  background-color: #a41a2fa0;
+  color: #fff;
+}
+
+/* إخفاء input وإظهار أيقونة فقط */
+@media (max-width: 500px) {
+  .searchInput {
+    display: none;
+  }
+
+  .searchIcon {
+    display: none;
+  }
+}
+
+/* العكس في الشاشات الكبيرة */
+@media (min-width: 501px) {
+  .searchInput {
+    display: inline-block;
+  }
+
+  .searchIcon {
+    display: none;
+  }
 }

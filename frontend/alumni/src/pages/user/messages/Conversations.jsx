@@ -1,14 +1,16 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Container, ListGroup, Image } from "react-bootstrap";
-import { UserContext } from "../../components/context/UserContext";
+import { Container, ListGroup, Image, Placeholder } from "react-bootstrap";
+import { UserContext } from "../../../components/context/UserContext";
+import { FaCircle } from "react-icons/fa";
 
 export default function Conversations() {
   const [conversations, setConversations] = useState([]);
   const { user } = useContext(UserContext);
   const token = localStorage.getItem("userToken");
   const navigate = useNavigate();
+const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchConversations();
@@ -20,6 +22,7 @@ export default function Conversations() {
         headers: { Authorization: `${token}` },
       });
       setConversations(res.data);
+          setIsLoading(false);
     } catch (err) {
       console.error("❌ Error fetching conversations", err);
     }
@@ -29,26 +32,33 @@ export default function Conversations() {
     return c.sender._id === user._id ? c.receiver : c.sender;
   };
 
+   if (isLoading)   return (
+      <>
+        <Placeholder xs={6} />
+        <Placeholder className="w-75" /> <Placeholder style={{ width: '25%' }} />
+      </>
+    );
+
   return (
     <Container className="my-5">
-      <h4>My Conversations</h4>
+      <h2 className="text-center m-4 text-bold" style={{ color: '#A41A2F' }}>My Conversations</h2>
       {conversations.length === 0 ? (
   <p className="text-muted mt-3">No conversations yet.</p>
 ) : (
-    <ListGroup>
+    <ListGroup >
     {conversations.map((c) => {
       const otherUser = getOtherUser(c);
       const isUnread =
         c.lastMessage.receiver === user._id && !c.lastMessage.isRead;
   
       return (
-        <ListGroup.Item
+        <ListGroup.Item style={{boxShadow:'5px 4px 10px #a41a2fa0'}}
           key={c.lastMessage._id}
           action
           onClick={() => navigate(`/chat/${otherUser._id}`)}
           className="d-flex align-items-center justify-content-between"
         >
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center" >
             <Image
               src={
                 otherUser.profileImage ||
@@ -79,7 +89,8 @@ export default function Conversations() {
                 borderRadius: "10px",
               }}
             >
-              New
+            <FaCircle />
+  New
             </span>
           )}
         </ListGroup.Item>

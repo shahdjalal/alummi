@@ -4,10 +4,13 @@ import { Container, Row, Col, Button, Card, Form, Dropdown } from "react-bootstr
 import { FaThumbsUp, FaComment, FaPaperPlane, FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import { IoMdAdd } from "react-icons/io";
-import { UserContext } from "../../../components/context/UserContext"; // ✅ استدعاء الكونتكست
-
+import { UserContext } from "../../../components/context/UserContext";
+import { jwtDecode } from "jwt-decode";
+import ProfileMenu from "./ProfileMenu"; // ✅ القائمة العلوية
+import style from './profile.module.css';
+import Loading from "../../../components/loading/Loading";
 export default function ProfileBar() {
-  const { user, successToast, setSuccessToast } = useContext(UserContext); // ✅ استخدام الكونتكست
+  const { user, successToast, setSuccessToast } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [showComments, setShowComments] = useState({});
   const [editPostData, setEditPostData] = useState({});
@@ -22,8 +25,15 @@ export default function ProfileBar() {
   const [showModal, setShowModal] = useState(false);
   const [listTitle, setListTitle] = useState("Followers");
   const [Follwings, setFollwings] = useState([]);
-  
+  const [currentUserId, setCurrentUserId] = useState(null);
   const token = localStorage.getItem("userToken");
+
+  useEffect(() => {
+    if (token) {
+      const decoded = jwtDecode(token);
+      setCurrentUserId(decoded.id);
+    }
+  }, [token]);
 
   const fetchProfileAndPosts = async () => {
     try {
@@ -42,42 +52,11 @@ export default function ProfileBar() {
     }
   };
 
-  const handleComment = async (postId, commentText) => {
-    try {
-      await axios.post(
-        `http://localhost:8000/api/posts/comment/${postId}`,
-        { text: commentText },
-        { headers: { Authorization: `${token}` } }
-      );
-  
-      toast.success("Comment added!");
-  
-      // 🟢 نضيف الكومنت محلياً بدون انتظار رد
-      setPosts(prevPosts =>
-        prevPosts.map(post =>
-          post._id === postId
-            ? {
-                ...post,
-                comments: [...post.comments, { text: commentText, user: { name: user.name } }]
-              }
-            : post
-        )
-      );
-  
-    } catch (error) {
-      console.error("❌ Error Details:", error.response?.data || error.message);
-      toast.error("Failed to add comment.");
-    }
-  };
-  
-
   const handleLike = async (postId) => {
     try {
-      await axios.put(
-        `http://localhost:8000/api/posts/like/${postId}`,
-        {},
-        { headers: { Authorization: `${token}` } }
-      );
+      await axios.put(`http://localhost:8000/api/posts/like/${postId}`, {}, {
+        headers: { Authorization: `${token}` },
+      });
       fetchProfileAndPosts();
     } catch (error) {
       toast.error("Failed to like post.");
@@ -85,21 +64,25 @@ export default function ProfileBar() {
   };
 
   const toggleComments = (postId) => {
-    setShowComments((prev) => ({
-      ...prev,
-      [postId]: !prev[postId],
-    }));
+    setShowComments((prev) => ({ ...prev, [postId]: !prev[postId] }));
   };
 
-  const handleDelete = async (postId) => {
+  const handleComment = async (postId, commentText) => {
     try {
-      await axios.delete(`http://localhost:8000/api/posts/delete/${postId}`, {
+      await axios.post(`http://localhost:8000/api/posts/comment/${postId}`, { text: commentText }, {
         headers: { Authorization: `${token}` },
       });
-      toast.success("Post deleted!");
-      fetchProfileAndPosts();
+
+      toast.success("Comment added!");
+      setPosts(prev =>
+        prev.map(post =>
+          post._id === postId
+            ? { ...post, comments: [...post.comments, { text: commentText, user: { name: user.name } }] }
+            : post
+        )
+      );
     } catch (error) {
-      toast.error("Failed to delete post.");
+      toast.error("Failed to add comment.");
     }
   };
 
@@ -118,16 +101,13 @@ export default function ProfileBar() {
         formData.append("image", selectedFile);
       }
 
-      await axios.put(
-        `http://localhost:8000/api/posts/edit/${editPostData.postId}`,
-        formData,
-        {
-          headers: {
-            Authorization: `${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.put(`http://localhost:8000/api/posts/edit/${editPostData.postId}`, formData, {
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       toast.success("Post updated!");
       setEditPostData({});
       setSelectedFile(null);
@@ -138,18 +118,25 @@ export default function ProfileBar() {
     }
   };
 
-  const handleCreatePost = async () => {
-    if (!newPostText) {
-      toast.error("Post text is required.");
-      return;
+  const handleDelete = async (postId) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/posts/delete/${postId}`, {
+        headers: { Authorization: `${token}` },
+      });
+      toast.success("Post deleted!");
+      fetchProfileAndPosts();
+    } catch (error) {
+      toast.error("Failed to delete post.");
     }
+  };
+
+  const handleCreatePost = async () => {
+    if (!newPostText) return toast.error("Post text is required.");
 
     try {
       const formData = new FormData();
       formData.append("text", newPostText);
-      if (newPostFile) {
-        formData.append("image", newPostFile);
-      }
+      if (newPostFile) formData.append("image", newPostFile);
 
       await axios.post("http://localhost:8000/api/posts", formData, {
         headers: {
@@ -169,54 +156,51 @@ export default function ProfileBar() {
     }
   };
 
-
   const fetchFollowers = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/api/users/${user._id}/followers`);
       setFollowers(response.data);
       setListTitle("Followers");
-      setShowModal(true); // فتح المودال
+      setShowModal(true);
     } catch (err) {
       console.error("Error fetching followers", err);
     }
   };
-  
 
-  const   fetchFollowing = async () => {
+  const fetchFollowing = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/api/users/${user._id}/following`);
       setFollwings(response.data);
-      setListTitle("Follwing");
-      setShowModal(true); // فتح المودال
+      setListTitle("Following");
+      setShowModal(true);
     } catch (err) {
-      console.error("Error fetching following list", err);
+      console.error("Error fetching following", err);
     }
   };
-  
+
   useEffect(() => {
     fetchProfileAndPosts();
 
     if (successToast) {
-      toast.success(" Profile updated successfully!", {
+      toast.success("Profile updated successfully!", {
         position: "top-right",
         autoClose: 3000,
         theme: "light"
       });
-      setSuccessToast(false); // ✅ إعادة تعيين الحالة
+      setSuccessToast(false);
     }
   }, [successToast]);
 
-  if (!user) return <p>Loading...</p>;
 
-
-
-
+if (!user) return <Loading/>;
   return (
-    <Container className="my-5">
+    <div className="position-relative">
+     
+     <Container className="my-5 mb-5">
       <ToastContainer />
 
       {/* 🟢 معلومات المستخدم */}
-      <Row className="align-items-center border-bottom pb-3 mb-4">
+      <Row className="align-items-center border-bottom pb-3 mb-4 gap-4">
         <Col xs={3}>
           <img
             src={user.profileImage ? user.profileImage : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&rounded=true&size=128`}
@@ -225,15 +209,15 @@ export default function ProfileBar() {
           />
         </Col>
         <Col>
-          <h5 className="fw-bold">{user.name}</h5>
+          <h2 className="fw-bold">{user.name}</h2>
           <p className="text-muted">{user.email}</p>
       
-          <p className="fw-bold">
-    <span style={{ color: '#A41A2F' }}>   {posts.length} posts &nbsp;&nbsp;</span>     
+          <p className={`${style.start} fw-bold`}>
+    <span style={{ color: '#A41A2F'}}>   {posts.length} posts &nbsp;&nbsp; &nbsp;&nbsp;</span>     
   <span style={{ cursor: 'pointer', color: '#A41A2F' }} onClick={() => fetchFollowers()}>
     {user.followers.length} followers
   </span>
-  &nbsp;&nbsp;
+  &nbsp;&nbsp; &nbsp;&nbsp;
   <span style={{ cursor: 'pointer', color: '#A41A2F' }} onClick={() => fetchFollowing()}>
     {user.following.length} following
   </span>
@@ -257,7 +241,7 @@ export default function ProfileBar() {
 </div>
       {/* 📝 البوستات */}
       <div className="d-flex justify-content-between align-items-center mb-3">
-  <h3 className="text-danger fw-bold">My Posts</h3>
+  <h3 className=" fw-bold" style={{ color: '#A41A2F' }}>My Posts</h3>
   <Button  size="xl" onClick={() => setShowAddModal(true)} style={{ background: '#A41A2F' }}>
   <IoMdAdd />
   Add Post
@@ -356,9 +340,9 @@ export default function ProfileBar() {
 
       {posts.map((post) => (
         <Card className="mb-4" key={post._id}>
-          <Card.Body>
+          <Card.Body style={{ boxShadow: '0px 4px 6px #111' }}>
             {/* 🟢 عنوان البوست */}
-            <Row className="align-items-center mb-2">
+            <Row className="align-items-center mb-2" >
               <Col xs={10} className="d-flex align-items-center">
                 <img
                   src={user.profileImage ? user.profileImage : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&rounded=true&size=128`}
@@ -475,8 +459,12 @@ export default function ProfileBar() {
               <Button
                 variant="outline-primary"
                 size="sm"
-                className="me-2"
+                className="me-2 mb-3"
                 onClick={() => handleLike(post._id)}
+                  style={{
+   backgroundColor: post.likes.includes(currentUserId) ? "#A41A2F" : "transparent",
+    color: post.likes.includes(currentUserId) ? "white" : "#A41A2F",
+   borderColor: "#A41A2F" }}
               >
                 <FaThumbsUp /> {post.likes.length}
               </Button>
@@ -484,6 +472,8 @@ export default function ProfileBar() {
                 variant="outline-secondary"
                 size="sm"
                 onClick={() => toggleComments(post._id)}
+                style={{ color: '#A41A2F' ,borderColor:'#A41A2F'}}
+                className="mb-3"
               >
                 <FaComment /> {post.comments.length} Comments
               </Button>
@@ -491,14 +481,8 @@ export default function ProfileBar() {
           </Card.Body>
 
           {showComments[post._id] && (
-            <Card.Footer>
-              {post.comments.map((comment) => (
-                <p key={comment._id} className="mb-1">
-                  <strong>{comment.user ? comment.user.name : "Anonymous"}:</strong> {comment.text}
-                </p>
-              ))}
-
-              <Form
+            <Card.Footer className="mb-5"> 
+             <Form
                 onSubmit={(e) => {
                   e.preventDefault();
                   const commentText = e.target.elements.commentText.value;
@@ -513,14 +497,28 @@ export default function ProfileBar() {
                   placeholder="Write a comment..."
                   className="me-2"
                 />
-                <Button type="submit" variant="primary">
+                <Button type="submit"  style={{ backgroundColor: '#A41A2F' }}>
                   <FaPaperPlane />
                 </Button>
               </Form>
+              {post.comments.map((comment) => (
+                <p key={comment._id} className="mb-1">
+                  <strong>{comment.user ? comment.user.name : "Anonymous"}:</strong> {comment.text}
+                </p>
+              ))}
+
+             
             </Card.Footer>
           )}
         </Card>
       ))}
     </Container>
+    </div>
   );
 }
+
+
+
+
+
+

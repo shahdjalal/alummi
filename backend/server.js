@@ -28,9 +28,18 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const messageRoutes = require("./routes/messages");
 app.use("/api/messages", messageRoutes);
 
+
+const groupMessagesRoutes = require('./routes/groupMessages');
+app.use('/api/group-messages', groupMessagesRoutes);
+
+const groupRoutes = require('./routes/groups');
+app.use("/api/groups", groupRoutes);
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
 
 
+const eventRoutes = require("./routes/eventRoutes");
+app.use("/api/events", eventRoutes);
 

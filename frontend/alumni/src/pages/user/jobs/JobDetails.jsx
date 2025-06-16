@@ -64,7 +64,7 @@ export default function JobDetails() {
 
   return (
     <Container className="my-5">
-      <h2>{job.title}</h2>
+      <h2  style={{color:'#A41A2F' }}>{job.title}</h2>
       <p><strong>Company:</strong> {job.company}</p>
       <p><strong>Location:</strong> {job.location}</p>
       <p><strong>Description:</strong> {job.description}</p>
@@ -87,7 +87,7 @@ export default function JobDetails() {
           <Form.Label>Upload CV</Form.Label>
           <Form.Control type="file" onChange={(e) => setCv(e.target.files[0])} required />
         </Form.Group>
-        <Button type="submit" variant="success">Apply Now</Button>
+        <Button type="submit" style={{backgroundColor:'#A41A2F' , color:'white'}}>Apply Now</Button>
       </Form>
     </Container>
   );

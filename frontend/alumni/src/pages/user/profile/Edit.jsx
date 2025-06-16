@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
-import { Button, Form, Container } from 'react-bootstrap';
+import { Button, Form, Container, Card, Placeholder } from 'react-bootstrap';
 import { UserContext } from '../../../components/context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Edit() {
-  const { user, setUser, setSuccessToast } = useContext(UserContext); // ✅ أضفنا setSuccessToast
+  const { user, setUser,  isLoading,setSuccessToast } = useContext(UserContext); // ✅ أضفنا setSuccessToast
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -50,13 +50,35 @@ export default function Edit() {
     }
   };
 
+   if (isLoading) return  (
+        <Card style={{ width: '18rem' }}>
+          <Card.Img variant="top" src="holder.js/100px180" />
+          <Card.Body>
+            <Placeholder as={Card.Title} animation="glow">
+              <Placeholder xs={6} />
+            </Placeholder>
+            <Placeholder as={Card.Text} animation="glow">
+              <Placeholder xs={7} /> <Placeholder xs={4} /> <Placeholder xs={4} />{' '}
+              <Placeholder xs={6} /> <Placeholder xs={8} />
+            </Placeholder>
+            <Placeholder.Button variant="danger" xs={6} />
+          </Card.Body>
+        </Card>
+    );
   return (
     <Container className="d-flex flex-column align-items-center justify-content-center p-3" style={{ minHeight: '80vh' }}>
-      <Form onSubmit={handleUpdate}
-        className="text-center p-4 border rounded shadow-lg bg-transparent"
-        style={{ backdropFilter: "blur(10px)", maxWidth: "100%", width: "400px", borderColor: "#bc9c72" }}
-      >
-        <h1 className="mb-4" style={{ color: "#bc9c72" }}>Edit Profile</h1>
+        <Form 
+    onSubmit={handleUpdate}
+      encType="multipart/form-data"
+      className="text-center p-4 border rounded shadow-lg bg-transparent w-100  mb-5 mt-3"
+      style={{
+        backdropFilter: "blur(10px)",
+        maxWidth: "500px",   // أقصى عرض للبوكس
+        borderColor: "#A41A2F"
+      }}
+    >
+    
+        <h1 className="mb-4" style={{ color: '#A41A2F' }}>Edit Profile</h1>
 
         <Form.Group controlId="formName" className="mb-3">
           <Form.Label className="fw-bold text-dark">Name</Form.Label>
@@ -101,7 +123,7 @@ export default function Edit() {
           />
         </Form.Group>
 
-        <Button type="submit" disabled={isUpdating} className="w-100" style={{ backgroundColor: "#bc9c72", borderColor: "#bc9c72" }}>
+        <Button type="submit" disabled={isUpdating} className="w-100" style={{ backgroundColor: '#A41A2F', borderColor: "#A41A2F" }}>
           {isUpdating ? 'Updating...' : 'Save Changes'}
         </Button>
       </Form>

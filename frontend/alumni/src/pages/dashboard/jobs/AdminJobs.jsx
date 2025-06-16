@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Table, Modal, Form } from 'react-bootstrap';
+import { Button, Table, Modal, Form, Container, Row, Col } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
@@ -86,47 +86,53 @@ export default function AdminJobs() {
   };
 
   return (
-    <div className="p-4">
+    <Container fluid className="p-3">
       <ToastContainer />
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Manage Jobs</h2>
-        <Button variant="primary" onClick={() => setShowAddModal(true)}>Add Job</Button>
+      <Row className="justify-content-between align-items-center mb-4">
+        <Col><h2 className="text-center text-md-start">Manage Jobs</h2></Col>
+        <Col className="text-end">
+          <Button variant="primary" onClick={() => setShowAddModal(true)}>➕ Add Job</Button>
+        </Col>
+      </Row>
+
+      <div style={{ overflowX: 'auto' }}>
+        <Table striped bordered hover responsive>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Company</th>
+              <th>Location</th>
+              <th>Description</th>
+              <th>Apply Link</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {jobs.map((job) => (
+              <tr key={job._id}>
+                <td>{job.title}</td>
+                <td>{job.company}</td>
+                <td>{job.location}</td>
+                <td>{job.description}</td>
+                <td>
+                  <a href={job.applyLink} target="_blank" rel="noopener noreferrer">
+                    Apply Here
+                  </a>
+                </td>
+                <td>
+                  <div className="d-flex flex-column flex-md-row">
+                    <Button variant="info" size="sm" onClick={() => handleViewApplications(job._id)} className="me-md-2 mb-1 mb-md-0">Applications</Button>
+                    <Button variant="warning" size="sm" onClick={() => openEditModal(job)} className="me-md-2 mb-1 mb-md-0">Edit</Button>
+                    <Button variant="danger" size="sm" onClick={() => handleDeleteJob(job._id)}>Delete</Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Company</th>
-            <th>Location</th>
-            <th>Description</th>
-            <th>Apply Link</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {jobs.map((job) => (
-            <tr key={job._id}>
-              <td>{job.title}</td>
-              <td>{job.company}</td>
-              <td>{job.location}</td>
-              <td>{job.description}</td>
-              <td>
-                <a href={job.applyLink} target="_blank" rel="noopener noreferrer">
-                  Apply Here
-                </a>
-              </td>
-              <td>
-                <Button variant="info" size="sm" onClick={() => handleViewApplications(job._id)} className="me-2">Applications</Button>
-                <Button variant="warning" size="sm" onClick={() => openEditModal(job)} className="me-2">Edit</Button>
-                <Button variant="danger" size="sm" onClick={() => handleDeleteJob(job._id)}>Delete</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-      {/* 🟡 Modal للتعديل */}
+      {/* Edit Modal */}
       {showEditModal && currentJob && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
           <Modal.Header closeButton>
@@ -134,47 +140,17 @@ export default function AdminJobs() {
           </Modal.Header>
           <Modal.Body>
             <Form>
-              <Form.Group className="mb-3">
-                <Form.Label>Title</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={currentJob.title}
-                  onChange={(e) => setCurrentJob({ ...currentJob, title: e.target.value })}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Company</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={currentJob.company}
-                  onChange={(e) => setCurrentJob({ ...currentJob, company: e.target.value })}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Location</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={currentJob.location}
-                  onChange={(e) => setCurrentJob({ ...currentJob, location: e.target.value })}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  value={currentJob.description}
-                  onChange={(e) => setCurrentJob({ ...currentJob, description: e.target.value })}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Apply Link</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={currentJob.applyLink}
-                  onChange={(e) => setCurrentJob({ ...currentJob, applyLink: e.target.value })}
-                />
-              </Form.Group>
+              {["title", "company", "location", "description", "applyLink"].map((field, i) => (
+                <Form.Group className="mb-3" key={i}>
+                  <Form.Label>{field.charAt(0).toUpperCase() + field.slice(1)}</Form.Label>
+                  <Form.Control
+                    as={field === "description" ? "textarea" : "input"}
+                    rows={field === "description" ? 3 : undefined}
+                    value={currentJob[field]}
+                    onChange={(e) => setCurrentJob({ ...currentJob, [field]: e.target.value })}
+                  />
+                </Form.Group>
+              ))}
             </Form>
           </Modal.Body>
           <Modal.Footer>
@@ -184,54 +160,24 @@ export default function AdminJobs() {
         </Modal>
       )}
 
-      {/* 🟢 Modal لإضافة وظيفة */}
+      {/* Add Modal */}
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Add New Job</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                value={newJob.title}
-                onChange={(e) => setNewJob({ ...newJob, title: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Company</Form.Label>
-              <Form.Control
-                type="text"
-                value={newJob.company}
-                onChange={(e) => setNewJob({ ...newJob, company: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Location</Form.Label>
-              <Form.Control
-                type="text"
-                value={newJob.location}
-                onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={newJob.description}
-                onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Apply Link</Form.Label>
-              <Form.Control
-                type="text"
-                value={newJob.applyLink}
-                onChange={(e) => setNewJob({ ...newJob, applyLink: e.target.value })}
-              />
-            </Form.Group>
+            {["title", "company", "location", "description", "applyLink"].map((field, i) => (
+              <Form.Group className="mb-3" key={i}>
+                <Form.Label>{field.charAt(0).toUpperCase() + field.slice(1)}</Form.Label>
+                <Form.Control
+                  as={field === "description" ? "textarea" : "input"}
+                  rows={field === "description" ? 3 : undefined}
+                  value={newJob[field]}
+                  onChange={(e) => setNewJob({ ...newJob, [field]: e.target.value })}
+                />
+              </Form.Group>
+            ))}
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -239,6 +185,6 @@ export default function AdminJobs() {
           <Button variant="success" onClick={handleCreateJob}>Add Job</Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Container>
   );
 }

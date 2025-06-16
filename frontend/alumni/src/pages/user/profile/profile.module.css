@@ -7,3 +7,15 @@
     object-fit: cover;
   }
   
+  .start{
+    font-size: 20px;
+  }
+
+  @media (max-width: 800px) {
+
+ .start{
+    font-size: 15px;
+  }
+
+
+  }

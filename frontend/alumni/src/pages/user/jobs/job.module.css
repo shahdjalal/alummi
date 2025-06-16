@@ -1,0 +1,15 @@
+
+
+.tableWrapper {
+  border-radius: 12px;
+  overflow: hidden; /* ✨ ضروري للحواف تشتغل */
+  box-shadow: 0 4px 6px #111111ab;
+  border: 1px solid #ddd;
+}
+
+.jobTable {
+  margin: 0;
+  border-collapse: collapse;
+  
+box-shadow: 0 4px 6px #111111ab;
+}

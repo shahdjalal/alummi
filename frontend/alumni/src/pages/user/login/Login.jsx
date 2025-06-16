@@ -46,7 +46,7 @@ export default function Login() {
         autoClose: 3000,
         theme: "light",
       });
-      navigate("/profile");
+      navigate("/profile/info");
     } catch (error) {
       const msg = error.response?.data?.message || "";
 

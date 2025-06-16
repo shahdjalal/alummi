@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useContext, useState } from 'react';
-import { Button, Form, Container } from 'react-bootstrap';
+import { Button, Form, Container, Placeholder, Card } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -50,16 +50,35 @@ export default function Image() {
     }
   };
 
-  if (isLoading) {
-    return <div>loading...</div>
-  }
+  if (isLoading) return  (
+      <Card style={{ width: '18rem' }}>
+        <Card.Img variant="top" src="holder.js/100px180" />
+        <Card.Body>
+          <Placeholder as={Card.Title} animation="glow">
+            <Placeholder xs={6} />
+          </Placeholder>
+          <Placeholder as={Card.Text} animation="glow">
+            <Placeholder xs={7} /> <Placeholder xs={4} /> <Placeholder xs={4} />{' '}
+            <Placeholder xs={6} /> <Placeholder xs={8} />
+          </Placeholder>
+          <Placeholder.Button variant="danger" xs={6} />
+        </Card.Body>
+      </Card>
+  );
 
   return (
     <Container className="d-flex flex-column align-items-center justify-content-center p-3" style={{ minHeight: '80vh' }}>
-      <Form onSubmit={handleSubmit(updateImage)} encType="multipart/form-data"
-        className="text-center p-4 border rounded shadow-lg bg-transparent"
-        style={{ backdropFilter: "blur(10px)", maxWidth: "100%", width: "50%", borderColor: "#A41A2F " }}
-      >
+     <Form 
+  onSubmit={handleSubmit(updateImage)} 
+  encType="multipart/form-data"
+  className="text-center p-4 border rounded shadow-lg bg-transparent w-100  mb-5 mt-3"
+  style={{
+    backdropFilter: "blur(10px)",
+    maxWidth: "500px",   // أقصى عرض للبوكس
+    borderColor: "#A41A2F"
+  }}
+>
+
         <h1 className="mb-4" style={{ color: "#A41A2F " }}>Update Profile Image</h1>
         
         <Form.Group controlId="updateImage" className="mb-3">
