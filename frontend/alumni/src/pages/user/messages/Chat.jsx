@@ -33,7 +33,7 @@ const [isLoadingMessages, setIsLoadingMessages] = useState(true);
   
   const fetchReceiver = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/users/user/${userId}`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/user/${userId}`, {
         headers: { Authorization: `${token}` },
       });
       setReceiver(res.data.user);
@@ -45,7 +45,7 @@ const [isLoadingMessages, setIsLoadingMessages] = useState(true);
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/messages/${userId}`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/messages/${userId}`, {
         headers: { Authorization: `${token}` },
       });
       setMessages(res.data);
@@ -66,7 +66,7 @@ const [isLoadingMessages, setIsLoadingMessages] = useState(true);
     formData.append("receiverId", userId);
   
     try {
-      const res = await axios.post("http://localhost:8000/api/messages/send", formData, {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/messages/send`, formData, {
         headers: {
           Authorization: `${token}`,
           "Content-Type": "multipart/form-data",

@@ -18,7 +18,7 @@ const [isLoading, setIsLoading] = useState(true);
 
   const fetchConversations = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/messages/conversations", {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/messages/conversations`, {
         headers: { Authorization: `${token}` },
       });
       setConversations(res.data);

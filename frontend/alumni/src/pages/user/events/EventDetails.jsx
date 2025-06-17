@@ -14,7 +14,7 @@ export default function EventDetails() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/events/${eventId}`, {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/events/${eventId}`, {
           headers: { Authorization: `${token}` },
         });
 
@@ -40,7 +40,7 @@ export default function EventDetails() {
   const handleRegister = async () => {
     try {
       await axios.post(
-        `http://localhost:8000/api/events/register/${eventId}`,
+        `${process.env.REACT_APP_API_URL}/api/events/register/${eventId}`,
         {},
         { headers: { Authorization: `${token}` } }
       );

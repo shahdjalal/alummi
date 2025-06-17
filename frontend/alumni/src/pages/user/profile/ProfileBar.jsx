@@ -37,11 +37,11 @@ export default function ProfileBar() {
 
   const fetchProfileAndPosts = async () => {
     try {
-      const profileRes = await axios.get("http://localhost:8000/api/auth/profile", {
+      const profileRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/profile`, {
         headers: { Authorization: `${token}` },
       });
 
-      const postsRes = await axios.get("http://localhost:8000/api/posts", {
+      const postsRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts`, {
         headers: { Authorization: `${token}` },
       });
 
@@ -54,7 +54,7 @@ export default function ProfileBar() {
 
   const handleLike = async (postId) => {
     try {
-      await axios.put(`http://localhost:8000/api/posts/like/${postId}`, {}, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/posts/like/${postId}`, {}, {
         headers: { Authorization: `${token}` },
       });
       fetchProfileAndPosts();
@@ -69,7 +69,7 @@ export default function ProfileBar() {
 
   const handleComment = async (postId, commentText) => {
     try {
-      await axios.post(`http://localhost:8000/api/posts/comment/${postId}`, { text: commentText }, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/posts/comment/${postId}`, { text: commentText }, {
         headers: { Authorization: `${token}` },
       });
 
@@ -101,7 +101,7 @@ export default function ProfileBar() {
         formData.append("image", selectedFile);
       }
 
-      await axios.put(`http://localhost:8000/api/posts/edit/${editPostData.postId}`, formData, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/posts/edit/${editPostData.postId}`, formData, {
         headers: {
           Authorization: `${token}`,
           "Content-Type": "multipart/form-data",
@@ -120,7 +120,7 @@ export default function ProfileBar() {
 
   const handleDelete = async (postId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/posts/delete/${postId}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/posts/delete/${postId}`, {
         headers: { Authorization: `${token}` },
       });
       toast.success("Post deleted!");
@@ -138,7 +138,7 @@ export default function ProfileBar() {
       formData.append("text", newPostText);
       if (newPostFile) formData.append("image", newPostFile);
 
-      await axios.post("http://localhost:8000/api/posts", formData, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/posts`, formData, {
         headers: {
           Authorization: `${token}`,
           "Content-Type": "multipart/form-data",
@@ -158,7 +158,7 @@ export default function ProfileBar() {
 
   const fetchFollowers = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/users/${user._id}/followers`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/${user._id}/followers`);
       setFollowers(response.data);
       setListTitle("Followers");
       setShowModal(true);
@@ -169,7 +169,7 @@ export default function ProfileBar() {
 
   const fetchFollowing = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/users/${user._id}/following`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/${user._id}/following`);
       setFollwings(response.data);
       setListTitle("Following");
       setShowModal(true);

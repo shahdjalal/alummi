@@ -37,7 +37,7 @@ export default function Register() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/auth/register`,
+        `${process.env.REACT_APP_API_URL}/api/auth/register`,
         {
           name: value.userName,
           email: value.email,

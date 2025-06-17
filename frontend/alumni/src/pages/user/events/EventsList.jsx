@@ -10,7 +10,7 @@ export default function EventsList() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/events");
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/events`);
         setEvents(res.data);
         setIsLoading(false);
       } catch (err) {

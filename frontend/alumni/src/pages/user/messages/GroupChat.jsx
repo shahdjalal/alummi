@@ -32,7 +32,7 @@ const [isLoadingMessages, setIsLoadingMessages] = useState(true);
 
   const fetchGroupData = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/groups/${groupId}`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/groups/${groupId}`, {
         headers: { Authorization: token },
       });
       setGroupInfo(res.data);
@@ -43,7 +43,7 @@ const [isLoadingMessages, setIsLoadingMessages] = useState(true);
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/groups/${groupId}/messages`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/groups/${groupId}/messages`, {
         headers: { Authorization: token },
       });
       setMessages(res.data);
@@ -59,7 +59,7 @@ const [isLoadingMessages, setIsLoadingMessages] = useState(true);
 
     try {
       const res = await axios.post(
-        `http://localhost:8000/api/groups/${groupId}/message`,
+        `${process.env.REACT_APP_API_URL}/api/groups/${groupId}/message`,
         { text: newMsg },
         {
           headers: { Authorization: token },
