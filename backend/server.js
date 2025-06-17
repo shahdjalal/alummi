@@ -35,11 +35,12 @@ app.use('/api/group-messages', groupMessagesRoutes);
 const groupRoutes = require('./routes/groups');
 app.use("/api/groups", groupRoutes);
 
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
 
 
 const eventRoutes = require("./routes/eventRoutes");
 app.use("/api/events", eventRoutes);
 
+
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
