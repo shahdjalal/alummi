@@ -11,7 +11,7 @@ export const UserContextProvider = ({ children }) => {
   const getUser = async () => {
     const token = localStorage.getItem("userToken");
     try {
-      const res = await axios.get("http://localhost:8000/api/auth/profile", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
         headers: { Authorization: token },
       });
       setUser(res.data.user);

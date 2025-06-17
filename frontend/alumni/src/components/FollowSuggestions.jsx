@@ -14,7 +14,7 @@ const navigate=useNavigate()
 
   const fetchSuggestions = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/auth/suggestions', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/suggestions`, {
         headers: { Authorization: `${token}` },
       });
       setSuggestions(res.data);
@@ -27,7 +27,7 @@ const navigate=useNavigate()
 
   const handleFollow = async (userId) => {
     try {
-      await axios.post(`http://localhost:8000/api/auth/follow/${userId}`, {}, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/follow/${userId}`, {}, {
         headers: { Authorization: `${token}` },
       });
       toast.success('✅ Followed');
