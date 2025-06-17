@@ -13,13 +13,13 @@ export default function JobApplications() {
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/jobs/applications/${jobId}`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs/applications/${jobId}`, {
           headers: { Authorization: `${token}` },
         });
         setApplications(res.data);
 
         // جلب بيانات الوظيفة
-        const jobRes = await axios.get(`http://localhost:8000/api/jobs/${jobId}`, {
+        const jobRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs/${jobId}`, {
           headers: { Authorization: `${token}` },
         });
         setJobTitle(jobRes.data.title); // حفظ اسم الوظيفة

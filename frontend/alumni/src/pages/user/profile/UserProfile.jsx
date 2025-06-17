@@ -33,7 +33,7 @@ export default function UserProfile() {
 
   const fetchUserData = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/user/${userId}`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/user/${userId}`, {
         headers: { Authorization: `${token}` }
       });
       setUser(res.data.user);
@@ -47,8 +47,8 @@ export default function UserProfile() {
   const handleFollowToggle = async () => {
     try {
       const url = isFollowing
-        ? `${process.env.REACT_APP_API_URL}/api/users/unfollow/${userId}`
-        : `${process.env.REACT_APP_API_URL}/api/users/follow/${userId}`;
+        ? `${import.meta.env.VITE_API_URL}/api/users/unfollow/${userId}`
+        : `${import.meta.env.VITE_API_URL}/api/users/follow/${userId}`;
 
       await axios.put(url, {}, { headers: { Authorization: `${token}` } });
       toast.success(isFollowing ? 'Unfollowed' : 'Followed');
@@ -60,7 +60,7 @@ export default function UserProfile() {
 
   const handleLike = async (postId) => {
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/posts/like/${postId}`, {}, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/posts/like/${postId}`, {}, {
         headers: { Authorization: `${token}` },
       });
       fetchUserData();
@@ -71,7 +71,7 @@ export default function UserProfile() {
 
   const handleComment = async (postId, commentText) => {
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/posts/comment/${postId}`, { text: commentText }, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/posts/comment/${postId}`, { text: commentText }, {
         headers: { Authorization: `${token}` },
       });
       toast.success('Comment added!');

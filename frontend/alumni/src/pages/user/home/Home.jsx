@@ -52,7 +52,7 @@ export default function Home() {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/posts`, {
         headers: { Authorization: `${token}` },
       });
       setPosts(res.data);
@@ -65,7 +65,7 @@ export default function Home() {
   const handleLike = async (postId) => {
     try {
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/posts/like/${postId}`,
+        `${import.meta.env.VITE_API_URL}/api/posts/like/${postId}`,
         {},
         {
           headers: { Authorization: `${token}` },
@@ -80,7 +80,7 @@ export default function Home() {
   const handleComment = async (postId, commentText) => {
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/posts/comment/${postId}`,
+        `${import.meta.env.VITE_API_URL}/api/posts/comment/${postId}`,
         { text: commentText },
         { headers: { Authorization: `${token}` } }
       );
@@ -113,7 +113,7 @@ export default function Home() {
         formData.append("image", newPostImage);
       }
 
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/posts`, formData, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/posts`, formData, {
         headers: {
           Authorization: `${token}`,
           "Content-Type": "multipart/form-data",

@@ -24,7 +24,7 @@ export default function AdminEvents() {
   const navigate=useNavigate()
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/events", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/events`, {
         headers: { Authorization: `${token}` },
       });
       setEvents(res.data);
@@ -39,7 +39,7 @@ export default function AdminEvents() {
 
   const handleDeleteEvent = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/events/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/events/${id}`, {
         headers: { Authorization: `${token}` },
       });
       toast.success("🗑️ Event deleted");
@@ -60,7 +60,7 @@ const handleCreateEvent = async () => {
       date: new Date(newEvent.date).toISOString(), // ✅ صيغة ISO
     };
 
-    await axios.post("http://localhost:8000/api/events", formattedEvent, {
+    await axios.post(`${import.meta.env.VITE_API_URL}/api/events`, formattedEvent, {
       headers: { Authorization: `${token}` },
     });
 
@@ -81,7 +81,7 @@ const handleUpdateEvent = async () => {
     };
 
     await axios.put(
-      `http://localhost:8000/api/events/${currentEvent._id}`,
+      `${import.meta.env.VITE_API_URL}/api/events/${currentEvent._id}`,
       formattedEvent,
       { headers: { Authorization: `${token}` } }
     );

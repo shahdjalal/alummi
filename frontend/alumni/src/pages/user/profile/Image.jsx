@@ -28,7 +28,7 @@ export default function Image() {
     try {
       setIsUpdating(true);
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/auth/upload-profile-image`,
+        `${import.meta.env.VITE_API_URL}/api/auth/upload-profile-image`,
         formData,
         {
           headers: {

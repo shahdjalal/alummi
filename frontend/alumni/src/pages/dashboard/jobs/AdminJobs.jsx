@@ -22,7 +22,7 @@ export default function AdminJobs() {
 
   const fetchJobs = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/jobs', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs`, {
         headers: { Authorization: `${token}` },
       });
       setJobs(res.data); 
@@ -37,7 +37,7 @@ export default function AdminJobs() {
 
   const handleDeleteJob = async (jobId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/jobs/delete/${jobId}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/jobs/delete/${jobId}`, {
         headers: { Authorization: `${token}` },
       });
       toast.success('🗑️ Job deleted');
@@ -55,7 +55,7 @@ export default function AdminJobs() {
   const handleUpdateJob = async () => {
     try {
       await axios.put(
-        `http://localhost:8000/api/jobs/edit/${currentJob._id}`,
+        `${import.meta.env.VITE_API_URL}/api/jobs/edit/${currentJob._id}`,
         currentJob,
         { headers: { Authorization: `${token}` } }
       );
@@ -69,7 +69,7 @@ export default function AdminJobs() {
 
   const handleCreateJob = async () => {
     try {
-      await axios.post('http://localhost:8000/api/jobs/add', newJob, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/jobs/add`, newJob, {
         headers: { Authorization: `${token}` },
       });
       toast.success('🟢 Job added');

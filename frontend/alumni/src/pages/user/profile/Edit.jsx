@@ -29,7 +29,7 @@ export default function Edit() {
     try {
       setIsUpdating(true);
       const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/auth/profile`,
+        `${import.meta.env.VITE_API_URL}/api/auth/profile`,
         {
           name: formData.name,
           skills: updatedSkills,

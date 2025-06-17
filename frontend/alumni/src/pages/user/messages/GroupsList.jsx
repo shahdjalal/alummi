@@ -19,7 +19,7 @@ const [isLoading, setIsLoading] = useState(true);
 
   const fetchGroups = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/groups`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/groups`, {
         headers: { Authorization: `${token}` },
       });
       setGroups(res.data);
@@ -32,7 +32,7 @@ const [isLoading, setIsLoading] = useState(true);
   const requestJoin = async (batchYear) => {
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/groups/request/${batchYear}`,
+        `${import.meta.env.VITE_API_URL}/api/groups/request/${batchYear}`,
         {},
         { headers: { Authorization: `${token}` } }
       );

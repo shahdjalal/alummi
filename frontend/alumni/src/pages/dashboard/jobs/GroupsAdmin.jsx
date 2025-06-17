@@ -18,7 +18,7 @@ const navigate = useNavigate();
 
   const fetchGroups = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/groups", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/groups`, {
         headers: { Authorization: `${token}` },
       });
       setGroups(res.data);
@@ -37,7 +37,7 @@ const handleApprove = async (userId, groupId) => {
   if (!userId || !groupId) return;
 
   try {
-    await axios.put(`http://localhost:8000/api/groups/approve/${groupId}/${userId}`, null, {
+    await axios.put(`${import.meta.env.VITE_API_URL}/api/groups/approve/${groupId}/${userId}`, null, {
       headers: { Authorization: `${token}` },
     });
      setApprovedIds(prev => [...prev, userId]);
@@ -52,7 +52,7 @@ const handleApprove = async (userId, groupId) => {
     if (!newBatchYear.trim()) return;
     try {
       await axios.post(
-        "http://localhost:8000/api/groups/create",
+       ` ${import.meta.env.VITE_API_URL}/api/groups/create`,
         { batchYear: newBatchYear },
         { headers: { Authorization: `${token}` } }
       );
@@ -67,7 +67,7 @@ const handleApprove = async (userId, groupId) => {
   if (!window.confirm("Are you sure you want to delete this group?")) return;
 
   try {
-    await axios.delete(`http://localhost:8000/api/groups/${groupId}`, {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/api/groups/${groupId}`, {
       headers: { Authorization: `${token}` }
     });
     // حدّثي القائمة بعد الحذف

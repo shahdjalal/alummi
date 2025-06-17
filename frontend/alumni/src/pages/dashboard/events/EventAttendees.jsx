@@ -15,7 +15,7 @@ export default function EventAttendees() {
   useEffect(() => {
     const fetchAttendees = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/events/${id}`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/events/${id}`, {
           headers: { Authorization: token },
         });
         setAttendees(res.data.attendees);

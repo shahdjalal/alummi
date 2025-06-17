@@ -15,7 +15,7 @@ export default function JobsList() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/jobs`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs`);
         setJobs(res.data);
         setIsLoading(false);
       } catch (error) {

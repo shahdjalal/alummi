@@ -15,7 +15,7 @@ export default function JobDetails() {
   const [cv, setCv] = useState(null);
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/api/jobs/${jobId}`)
+    axios.get(`${import.meta.env.VITE_API_URL}/api/jobs/${jobId}`)
       .then(res => setJob(res.data))
       .catch(err => toast.error('Failed to fetch job details'));
   }, [jobId]);
@@ -29,7 +29,7 @@ export default function JobDetails() {
     formData.append('cv', cv);
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/jobs/apply/${jobId}`, formData, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/jobs/apply/${jobId}`, formData, {
         headers: {
           Authorization: `${token}`,
           'Content-Type': 'multipart/form-data',
