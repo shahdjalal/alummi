@@ -243,21 +243,26 @@ export default function Home() {
               }}
             >
               <img
-                src={
-                  post.user?.profileImage ||
-                  `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    post.user?.name
-                  )}&background=A41A2F&color=fff&rounded=true&size=128`
-                }
-                alt="Profile"
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  marginRight: "10px",
-                  objectFit: "cover",
-                }}
-              />
+  src={
+    post.user?.profileImage
+      ? `${import.meta.env.VITE_API_URL}/${post.user.profileImage}`
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          post.user?.name
+        )}&background=A41A2F&color=fff&rounded=true&size=128`
+  }
+  alt="Profile"
+  style={{
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
+    marginRight: "10px",
+    objectFit: "cover",
+  }}
+  onError={(e) => (e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    post.user?.name
+  )}&background=A41A2F&color=fff&rounded=true&size=128`)}
+/>
+
               <Link
                 to={`/profile/${post.user?._id}`}
                 style={{ color: "white", textDecoration: "none" }}
@@ -267,13 +272,15 @@ export default function Home() {
             </Card.Header>
             <Card.Body>
               <Card.Text>{post.text}</Card.Text>
-              {post.image && (
-                <Card.Img
-                  variant="top"
-                  src={post.image}
-                  style={{ maxHeight: "300px", objectFit: "contain" }}
-                />
-              )}
+             {post.image && (
+  <Card.Img
+    variant="top"
+    src={`${import.meta.env.VITE_API_URL}/${post.image}`}
+    style={{ maxHeight: "300px", objectFit: "contain" }}
+    onError={(e) => (e.target.style.display = "none")}
+  />
+)}
+
               <div className="d-flex justify-content-between mt-2">
                 <Button
                   size="sm"
