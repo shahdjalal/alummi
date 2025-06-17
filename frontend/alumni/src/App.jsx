@@ -28,13 +28,16 @@ import EventsList from './pages/user/events/EventsList';
 import EventDetails from './pages/user/events/EventDetails';
 import AdminEvents from './pages/dashboard/events/AdminEvents';
 import EventAttendees from './pages/dashboard/events/EventAttendees';
+import ProtectedAdminRoute from './components/dashboard/ProtectedAdminRoute';
+import PublicRoute from './components/dashboard/PublicRoute';
+import { ToastContainer } from 'react-toastify';
 
 export default function App() {
   const router = createBrowserRouter([
     {
       path: "/auth",
       element:
-       <Authlayout />
+    <PublicRoute> <Authlayout /></PublicRoute>  
      
        ,
       children: [
@@ -58,7 +61,7 @@ export default function App() {
     },
    { 
     path: "/",
-    element:<UserContextProvider><Userlayout /></UserContextProvider>  ,
+    element:<Userlayout />  ,
   
     children: [
       {
@@ -124,8 +127,9 @@ export default function App() {
     {
       path: "/admin",
       element:
+      <ProtectedAdminRoute>
        <Adminlayout />
-     
+     </ProtectedAdminRoute>
        ,
       children: [
         {
@@ -155,8 +159,10 @@ export default function App() {
   ])
   return (
     <>
-      
+      <UserContextProvider>
+        <ToastContainer />
       <RouterProvider router={router} />
+      </UserContextProvider>
     </>
   )
 }

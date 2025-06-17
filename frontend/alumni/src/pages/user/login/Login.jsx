@@ -68,7 +68,10 @@ export default function Login() {
           autoClose: 4000,
           theme: "colored",
         });
-      } else {
+      }
+      else if (error.response?.status === 429) {
+    toast.error(" Too many login attempts. Please try again later.");
+  }  else {
         toast.error("🚨 Something went wrong", {
           position: "top-right",
           autoClose: 4000,

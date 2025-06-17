@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const rateLimit = require("express-rate-limit");
 
 dotenv.config();
 connectDB();
@@ -9,6 +10,17 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+const loginLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 دقيقة
+  max: 5, // 5 محاولات فقط في الدقيقة
+  message: "Too many login attempts, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+//  فقط على راوت تسجيل الدخول
+app.use("/api/auth/login", loginLimiter);
 
 // استيراد المسارات
 app.use("/api/auth", require("./routes/auth"));
